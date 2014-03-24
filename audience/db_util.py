@@ -8,6 +8,8 @@ from jinja2 import TemplateNotFound
 
 from audience import app
 
+#some database stuffs
+
 def connect_db():
     """Connects to the specific database."""
     rv = sqlite3.connect(app.config['DATABASE'])

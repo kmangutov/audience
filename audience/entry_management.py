@@ -12,9 +12,7 @@ QL_USER_EXISTS = 'select exists(select 1 from users where user_login=? limit 1)'
 SQL_USER_INSERT = 'insert into users(user_login, user_pass) values(?,?)'
 SQL_USER_LOGIN = 'select exists(select 1 from users where user_login=? and user_pass=? limit 1)'
 
-#def exists_entry(url):
-
-
+# post a music entry by the user
 @app.route('/u/<username>', methods=['POST'])
 def add_entry():
     if not session.get('logged_in'):
@@ -23,12 +21,7 @@ def add_entry():
     url = request.form['url']
     post_entry(url)
 
-
-
-#def post_entry(url):
-
-
-
+# show the music entries this user has shared
 @app.route('/u/<username>')
 def show_user(username):
     return render_template('user.html', name=username)

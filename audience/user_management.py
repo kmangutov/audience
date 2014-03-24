@@ -8,13 +8,14 @@ from db_util import get_db
 
 from audience import app
 
-########################################
-########################################user management routing
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
+
     if request.method == 'POST':
+        # if this is a login attempt,
+
         username = request.form['username']
         password = request.form['password']
 
@@ -30,6 +31,7 @@ def login():
             return render_template('login.html', error=error)
 
         error = "Invalid login name"
+
     return render_template('login.html', error=error)
 
 @app.route('/logout')
@@ -43,6 +45,8 @@ def register():
     error = None
 
     if request.method == 'POST':
+        # if this is a register attempt,
+
         username = request.form['username']
         password = request.form['password']
 
@@ -64,7 +68,7 @@ def register():
 
 
 ##########################################
-##########################################user management
+##########################################database stuff
 
 SQL_USER_EXISTS = 'select exists(select 1 from users where user_login=? limit 1)'
 SQL_USER_INSERT = 'insert into users(user_login, user_pass) values(?,?)'
