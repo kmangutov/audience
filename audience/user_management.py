@@ -4,8 +4,8 @@ import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 from flask import Blueprint, render_template, abort
 from jinja2 import TemplateNotFound
-from db_util import get_db
 
+from db_util import get_db, query_db
 from audience import app
 
 
@@ -70,9 +70,9 @@ def register():
 ##########################################
 ##########################################database stuff
 
-SQL_USER_EXISTS = 'select exists(select 1 from users where user_login=? limit 1)'
+SQL_USER_EXISTS = 'select * from users where user_login=? limit 1'
 SQL_USER_INSERT = 'insert into users(user_login, user_pass) values(?,?)'
-SQL_USER_LOGIN = 'select exists(select 1 from users where user_login=? and user_pass=? limit 1)'
+SQL_USER_LOGIN = 'select exists(select * from users where user_login=? and user_pass=? limit 1)'
 
 def valid_login(username, password):
     db = get_db()
@@ -89,15 +89,18 @@ def create_account(username, password):
 
 
 def exists_account(username):
-    #check if exists
-    db = get_db()
-    cur = db.execute(SQL_USER_EXISTS, [username])
-    value = cur.fetchone()
+    # check if exists
+    # return 0 if doesnt exist, otherwise return user id
+    # lol 
 
-    app.logger.debug(value[0])
+    user = query_db(SQL_USER_EXISTS, [username], one=True)
+    
+    if user is None:
+        return 0
+    else:
+        return user['user_id']
 
-    #check that len(result) is 1 to be valid
-    return value[0] == 1
+
 ##############################################
 ##############################################
 
