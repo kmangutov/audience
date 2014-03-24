@@ -8,6 +8,9 @@ from db_util import get_db
 
 from audience import app
 
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
