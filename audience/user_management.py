@@ -5,9 +5,20 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 from flask import Blueprint, render_template, abort
 from jinja2 import TemplateNotFound
 
-from db_util import get_db, query_db
+from db_util import get_db, query_db, exec_db
 from audience import app
 
+
+SQL_USER_EXISTS = 'select * from users where user_login=? limit 1'
+SQL_USER_INSERT = 'insert into users(user_login, user_pass) values(?,?)'
+SQL_USER_LOGIN = 'select exists(select * from users where user_login=? and user_pass=? limit 1)'
+SQL_SELECT_USERS = 'select * from users'
+
+# browse all users
+@app.route('/users')
+def show_users():
+    users = query_db(SQL_SELECT_USERS)
+    return render_template('users.html', users=users)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -70,10 +81,6 @@ def register():
 ##########################################
 ##########################################database stuff
 
-SQL_USER_EXISTS = 'select * from users where user_login=? limit 1'
-SQL_USER_INSERT = 'insert into users(user_login, user_pass) values(?,?)'
-SQL_USER_LOGIN = 'select exists(select * from users where user_login=? and user_pass=? limit 1)'
-
 def valid_login(username, password):
     db = get_db()
     cur = db.execute(SQL_USER_LOGIN, [username, password])
@@ -82,10 +89,9 @@ def valid_login(username, password):
     #check that len(result) is 1 to be valid
     return value[0] == 1
 
-def create_account(username, password):
-    db = get_db()
-    db.execute(SQL_USER_INSERT, [username, password])
-    db.commit()
+def create_account(username, password):    
+    exec_db(SQL_USER_INSERT, [username, password])
+
 
 
 def exists_account(username):

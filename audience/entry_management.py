@@ -18,6 +18,22 @@ SQL_USER_WALL = ('select * from shares '
  	'inner join entries p2 '
  	'on p2.entry_id=shares.share_value '
  	'where p1.user_login=?')
+SQL_ALL_WALL = ('select * from shares '
+ 	'inner join users p1 '
+ 	'on p1.user_id=shares.share_source ' 
+ 	'inner join entries p2 '
+ 	'on p2.entry_id=shares.share_value ')
+
+# view all
+@app.route('/')
+def view_all():
+
+	username = ""
+	if session.get('logged_in'):
+		username = session.get('username')
+
+	entries = query_wall()
+	return render_template('user.html', name=username, entries=entries)
 
 # post a music entry by the user
 @app.route('/u/<username>', methods=['POST'])
@@ -44,12 +60,9 @@ def get_entry_id(url):
 		return entry['entry_id']
 
 def post_entry(url):
-    db = get_db()
-    entry = db.execute(SQL_ENTRY_INSERT, [url])
-    db.commit()
-    return entry.lastrowid
-    #entry = query_db(SQL_ENTRY_INSERT, [url], one=True)
-    #return entry['entry_id']
+
+    entry = exec_db(SQL_ENTRY_INSERT, [url], one=True)
+    return entry
 
 def do_share(username, url):
 
@@ -65,24 +78,12 @@ def do_share(username, url):
 
 	entry = exec_db(SQL_SHARE, [user_id, entry_id])
 
+def query_wall():
+	entries = query_db(SQL_ALL_WALL)
+	return entries;
+
 def query_user_wall(username):
-
-
-	test_entry = query_db('select * from shares')
-	for entry in test_entry:
-		app.logger.debug(entry['share_id'])
-
-	test_entry = query_db('select * from entries')
-	for entry in test_entry:
-		app.logger.debug(entry['entry_url'])
-
-
-	app.logger.debug('enter')
 	entries = query_db(SQL_USER_WALL, [username])
-
-	for entry in entries:
-		app.logger.debug(entry['entry_url'])
-
 	return entries;
 
 

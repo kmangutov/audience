@@ -21,7 +21,8 @@ def exec_db(query, args=(), one=False):
     get_db().commit()
     rv = cur.fetchall()
     cur.close()
-    return (rv[0] if rv else None) if one else rv
+    return cur.lastrowid
+    #return (rv[0] if rv else None) if one else rv
 
 def connect_db():
     """Connects to the specific database."""

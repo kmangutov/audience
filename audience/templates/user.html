@@ -7,7 +7,7 @@ Name: {{ name }}<br><br>
 {% if session.logged_in %}
 <form action="{{ url_for('add_entry', username=name)}}{{username}}" method=post class=add-entry>
   <dl>
-    <dt>Title:
+    <dt>Youtube end of url
     <dd><input type=text size=30 name=url>
     <dd><input type=submit value=Share>
   </dl>
@@ -16,10 +16,19 @@ Name: {{ name }}<br><br>
 
 <ul class=entries>
 {% for entry in entries %}
-	<li><h2>{{ entry['entry_url'] }}</h2>
+
+	<li>
+
+		<iframe width="560" height="315" src="//www.youtube.com/embed/{{ entry['entry_url'] }}" frameborder="0" allowfullscreen></iframe>
+
+
+	<br>{{ entry['user_login'] }} - {{ entry['entry_url'] }}
+
+	</li>
 {% else %}
-	<li><em>Empty</em>
+	<li><em>Empty</em></li>
 {% endfor %}
+</ul>
 
 
 {% endblock %}
