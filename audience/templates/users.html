@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block body %}
+
+
+<ul class=entries>
+{% for user in users %}
+	<li>
+		<a href="{{ url_for('show_user', username=user['user_login']) }}">{{ user['user_login'] }}</a>
+	</li>
+{% else %}
+	<li><em>Empty</em>
+{% endfor %}
+
+
+{% endblock %}
